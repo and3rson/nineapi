@@ -22,7 +22,7 @@ class Client(object):
         Represents sub-API URLs.
         """
         API = 'http://api.9gag.com'
-        COMMENTS_CDN = 'http://comments-cdn.9gag.com'
+        COMMENT_CDN = 'http://comment-cdn.9gag.com'
         NOTIFY = 'http://notify.9gag.com'
         AD = 'http://ad.9gag.com'
         ADMIN = 'http://admin.9gag.com'
