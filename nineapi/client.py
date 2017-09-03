@@ -204,8 +204,8 @@ class Post(object):
 
     def __str__(self):
         return '<Post title="{}" url={}>'.format(
-            self.title,
-            self.url
+            self.title.encode('utf-8'),
+            self.url.encode('utf-8')
         )
 
     __repr__ = __str__
