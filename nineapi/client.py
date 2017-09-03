@@ -143,11 +143,12 @@ class Client(object):
         :param type_: Posts type (defaults to 'hot')
         :param count: Count of posts.
         :param entry_types: list of strings
-        :param olderThan: Last seen post (for pagination) - `str`, :class:`Post` or `None`
+        :param olderThan: Last seen post (for pagination) - `str`,
+                          :class:`Post` or `None`
         :returns: list of :class:`.Post`
         :raises: :class:`.APIException`
         """
-        args=dict(
+        args = dict(
             group=group,
             type=type_,
             itemCount=count,
@@ -178,32 +179,72 @@ class Post(object):
     """
     Represents single post.
     """
+
+    class Types(object):
+        """
+        Enum for possible :method:`Page.type` values.
+        """
+
+        Photo = 'Photo'
+        Animated = 'Animated'
+
     def __init__(self, props):
-        self.props = props
+        self._props = props
 
     @property
     def id(self):
         """
         Post ID.
         """
-        return self.props['id']
+        return self._props['id']
 
     @property
     def title(self):
         """
         Post title.
         """
-        return self.props['title']
+        return self._props['title']
 
     @property
     def url(self):
         """
         Post url.
         """
-        return self.props['url']
+        return self._props['url']
+
+    @property
+    def type(self):
+        """
+        Post type.
+        """
+        return self._props['type']
+
+    @property
+    def props(self):
+        """
+        Dictionary with post data.
+        """
+        return self._props
+
+    def get_media_url(self):
+        """
+        Returns image URL for Photo posts and .WEBM URL for Animated posts.
+        """
+        if self.type == Post.Types.Photo:
+            return self.props['images']['image700']['url']
+        elif self.type == Post.Types.Animated:
+            return self.props['images']['image460sv']['url']
+        raise NotImplementedError(
+            'Post type not implemented: {}, '
+            'you can report it here: '
+            'https://github.com/and3rson/nineapi/issues'.format(
+                self.type
+            )
+        )
 
     def __str__(self):
-        return '<Post title="{}" url={}>'.format(
+        return '<Post id="{}" title="{}" url={}>'.format(
+            self.id.encode('utf-8'),
             self.title.encode('utf-8'),
             self.url.encode('utf-8')
         )
