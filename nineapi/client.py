@@ -134,7 +134,8 @@ class Client(object):
         return True
 
     def get_posts(self, group=1, type_='hot', count=10,
-                  entry_types=['animated', 'photo', 'video', 'album']):
+                  entry_types=['animated', 'photo', 'video', 'album'],
+                  olderThan=None):
         """
         Fetch posts.
 
@@ -142,18 +143,25 @@ class Client(object):
         :param type_: Posts type (defaults to 'hot')
         :param count: Count of posts.
         :param entry_types: list of strings
+        :param olderThan: Last seen post (for pagination) - `str`, :class:`Post` or `None`
         :returns: list of :class:`.Post`
         :raises: :class:`.APIException`
         """
+        args=dict(
+            group=group,
+            type=type_,
+            itemCount=count,
+            entryTypes=','.join(entry_types),
+            offset=10
+        )
+        if olderThan is not None:
+            if isinstance(olderThan, Post):
+                olderThan = olderThan.id
+            args['olderThan'] = olderThan
         response = self._request(
             'GET',
             '/v2/post-list',
-            args=dict(
-                group=group,
-                type=type_,
-                itemCount=count,
-                entryTypes=','.join(entry_types)
-            )
+            args=args
         )
         self._validate_response(response)
         return list(map(Post, response['data']['posts']))
@@ -172,6 +180,13 @@ class Post(object):
     """
     def __init__(self, props):
         self.props = props
+
+    @property
+    def id(self):
+        """
+        Post ID.
+        """
+        return self.props['id']
 
     @property
     def title(self):
