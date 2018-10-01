@@ -5,6 +5,8 @@ import sys
 import keyring
 
 #While using the program the follwing command should be run only once,the system will store the creds.
+username=""
+password="" #This should be removed after setting the password
 keyring.set_password('9gag',username,password)
 
 class APITest(TestCase):
