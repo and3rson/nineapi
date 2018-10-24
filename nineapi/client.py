@@ -82,8 +82,7 @@ class Client(object):
             'X-Device-UUID': self.device_uuid,
             '9GAG-DEVICE_TYPE': 'android',
             '9GAG-BUCKET_NAME': 'MAIN_RELEASE',
-            'X-Package-ID': 'com.ninegag.android.app'
-        }
+            }
 
         if sign:
             headers['9GAG-REQUEST-SIGNATURE'] = utils.sign_request(
