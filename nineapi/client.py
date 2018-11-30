@@ -159,7 +159,7 @@ class Client(object):
 
     def get_posts(self, group=1, type_='hot', count=10,
                   entry_types=['animated', 'photo', 'video', 'album'],
-                  olderThan=None):
+                  olderThan=None, **kwargs):
         """
         Fetch posts.
 
@@ -177,7 +177,8 @@ class Client(object):
             type=type_,
             itemCount=count,
             entryTypes=','.join(entry_types),
-            offset=10
+            offset=10,
+            **kwargs
         )
         if olderThan is not None:
             if isinstance(olderThan, Post):
@@ -186,6 +187,36 @@ class Client(object):
         response = self._request(
             'GET',
             '/v2/post-list',
+            args=args
+        )
+        return list([Post(self, post) for post in response['data']['posts']])
+
+    def search_posts_by_tag(self, query, offset=0, count=10,
+                            entry_types=['animated', 'photo', 'video', 'album'],
+                            sort='asc', **kwargs):
+        """
+        Fetch posts that match specific tag.
+
+        :param query: Posts tag
+        :param offset: Offset to start from.
+        :param count: Count of posts.
+        :param entry_types: list of strings
+        :param sort: sorting order ("asc" or "desc") - does not seem to work
+        :returns: list of :class:`.Post`
+        :raises: :class:`.APIException`
+        """
+        args = dict(
+            query=query,
+            fromIndex=offset,
+            itemCount=count,
+            entryTypes=','.join(entry_types),
+            offset=10,
+            sort=sort,
+            **kwargs
+        )
+        response = self._request(
+            'GET',
+            '/v2/tag-search',
             args=args
         )
         return list([Post(self, post) for post in response['data']['posts']])
